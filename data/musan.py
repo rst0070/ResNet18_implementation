@@ -40,8 +40,11 @@ class MusanNoise:
         n = torch.squeeze(n)
         if len(x) > len(n):
             residual = len(x) - len(n)
-            n = (n[0 : residual % len(n)], n, n for i in range(0, residual // len(n)))
-            n = torch.cat(n, dim = 0)
+            noise = [n]
+            for i in range(0, residual // len(n)):
+                noise.append(n)
+            noise.append(n[0 : residual % len(n)])
+            n = torch.cat(noise, dim = 0)
         elif len(x) < len(n):
             residual = len(n) - len(x)
             start = random.randint(0, residual-1)

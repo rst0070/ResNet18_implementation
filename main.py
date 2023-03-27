@@ -65,19 +65,24 @@ class Main:
         
     def start(self):
         
+        min_eer = 100
+        model_state = None
         for epoch in range(1, self.max_epoch + 1):
             
             self.trainer.train()
             
             eer = self.tester.test(epoch = epoch)
-            self.save(epoch=epoch, eer=eer)
+            
+            if eer < min_eer:
+                min_eer = eer
+                model_state = self.model.state_dict()
 
             self.lr_scheduler.step()
             
-    def save(self, epoch, eer):
-        file_name = f"epoch_{epoch}_eer_{eer}.pth"
-        torch.save(self.model, file_name)
+        file_name = f"eer_{eer}.pth"
+        torch.save(model_state, file_name)
         wandb.save(file_name)
+        
             
 
 if __name__ == '__main__':
