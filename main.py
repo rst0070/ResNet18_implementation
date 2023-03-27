@@ -79,7 +79,7 @@ class Main:
 
             self.lr_scheduler.step()
             
-        file_name = f"eer_{eer}.pth"
+        file_name = f"eer_{min_eer}.pth"
         torch.save(model_state, file_name)
         wandb.save(file_name)
         

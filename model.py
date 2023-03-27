@@ -59,10 +59,6 @@ class ResNet_18(nn.Module):
         
         self.conv0 = nn.Conv2d(in_channels=1, out_channels=64, kernel_size=7, stride=2, padding=3) 
         self.bn1 = nn.BatchNorm2d(64)
-        self.bn2 = nn.BatchNorm1d(512)
-        self.bn3 = nn.BatchNorm1d(256)
-        self.bn4 = nn.BatchNorm1d(embedding_size)
-        self.bn5 = nn.BatchNorm1d(1211)
         self.relu = nn.ReLU()
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
@@ -83,10 +79,9 @@ class ResNet_18(nn.Module):
             Resblock(512, 512, 512, False)
         )
         self.avgpool = nn.AdaptiveAvgPool2d((1,1))
-        self.fc1 = nn.Linear(in_features=512, out_features=512)
-        self.fc2 = nn.Linear(in_features=512, out_features=256)
-        self.fc3 = nn.Linear(in_features=256, out_features=embedding_size) 
-        self.fc4 = nn.Linear(in_features=embedding_size, out_features=1211)
+        self.fc1 = nn.Linear(in_features=512, out_features=embedding_size)
+        self.bn2 = nn.BatchNorm1d(embedding_size)
+        self.fc2 = nn.Linear(in_features=embedding_size, out_features=1211)
         
     def forward(self, x, is_test = False):
         
@@ -106,14 +101,12 @@ class ResNet_18(nn.Module):
         x = x.view(x.size(0), -1) # 
 
         
-        x = self.relu(self.bn2(self.fc1(x))) #
-        x = self.relu(self.bn3(self.fc2(x)))
-        x = self.bn4(self.fc3(x))
+        x = self.relu(self.bn2(self.fc1(x)))
         
         if is_test: # return embedding
             return x
         
-        x = self.bn5(self.fc4(x))
+        x = self.fc2(x)
 
         return x
 
@@ -122,4 +115,4 @@ if __name__ == '__main__':
     from torchsummary import summary
     
     model = ResNet_18().cuda()
-    summary(model, input_size=(1,int(16000*3.2 - 1)))
+    summary(model, input_size=(1, 64, 320))

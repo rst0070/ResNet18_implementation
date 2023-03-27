@@ -9,7 +9,7 @@ def get_args():
     """
     system_args = {
 	    # log
-        'wandb_disabled': True,
+        'wandb_disabled': False,
         'wandb_key'     : '029f70f728310335e4824743783a5ae2ee3bcd21',
         'wandb_project' : 'noisy vs clean',
 	    'wandb_group'   : '',
@@ -38,7 +38,7 @@ def get_args():
 		'rand_seed'		    : 1,
         
         # model
-		'embedding_size'	: 256,
+		'embedding_size'	: 128,
         'aam_margin'        : 0.15,
         'aam_scale'         : 20,
         'spec_mask_F'       : 100,
